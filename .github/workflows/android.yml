@@ -5,24 +5,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      
+      - name: Set up JDK 11
+        uses: actions/setup-java@v4
         with:
           java-version: '11'
           distribution: 'temurin'
           cache: gradle
 
-      # 修正路径：由于文件散落在根目录，我们需要手动修复 build.gradle 的内容
-      - name: Patch Build File
+      - name: Fix Project Structure
         run: |
-          sed -i 's/apply plugin: .com.android.application./apply plugin: "com.android.application"/' build.gradle
-          
-      - name: Build APK
-        run: |
+          # 如果 src 文件夹在根目录，强行把它挪进 app 文件夹，伪造成标准结构
+          if [ -d "src" ]; then
+            mkdir -p app
+            mv src app/
+            # 如果 build.gradle 也在根目录，挪进去
+            [ -f "build.gradle" ] && cp build.gradle app/
+            [ -f "proguard-rules.pro" ] && mv proguard-rules.pro app/
+          fi
           chmod +x gradlew
-          ./gradlew assembleDebug --stacktrace
+
+      - name: Build with Gradle
+        run: ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Smart-Trash-Bin-App
-          path: build/outputs/apk/debug/*.apk
+          path: "**/build/outputs/apk/debug/*.apk"
