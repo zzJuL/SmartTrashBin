@@ -18,6 +18,14 @@ android {
     buildFeatures {
         viewBinding true
     }
+
+    // 解决版本冲突的关键配置
+    configurations.all {
+        resolutionStrategy {
+            force 'androidx.core:core-ktx:1.9.0'
+            force 'androidx.appcompat:appcompat:1.6.1'
+        }
+    }
 }
 
 dependencies {
@@ -27,13 +35,13 @@ dependencies {
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
-    // --- 相机核心依赖 (修复报错的关键) ---
-    def camerax_version = "1.2.2"
-    implementation "androidx.camera:camera-core:${camerax_version}"
-    implementation "androidx.camera:camera-camera2:${camerax_version}"
-    implementation "androidx.camera:camera-lifecycle:${camerax_version}"
-    implementation "androidx.camera:camera-view:${camerax_version}"
+    // 统一 CameraX 版本
+    implementation "androidx.camera:camera-core:1.2.2"
+    implementation "androidx.camera:camera-camera2:1.2.2"
+    implementation "androidx.camera:camera-lifecycle:1.2.2"
+    implementation "androidx.camera:camera-view:1.2.2"
 
-    // --- TensorFlow Lite 依赖 ---
+    // TensorFlow Lite
     implementation 'org.tensorflow:tensorflow-lite-task-vision:0.4.0'
+    implementation 'org.tensorflow:tensorflow-lite-gpu:2.9.0'
 }
