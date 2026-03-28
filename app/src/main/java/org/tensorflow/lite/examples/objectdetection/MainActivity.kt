@@ -7,18 +7,19 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import org.tensorflow.lite.examples.objectdetection.databinding.ActivityMainBinding
+// 如果报错在这里，说明 ViewBinding 还没生成，我们先用基础方式
+import android.view.View
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var viewBinding: ActivityMainBinding
     private val REQUEST_CODE_PERMISSIONS = 10
     private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewBinding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(viewBinding.root)
+        
+        // --- 临时改动：直接加载布局，绕过可能报错的 ViewBinding ---
+        setContentView(R.layout.activity_main)
 
         // 1. 检查摄像头权限
         if (allPermissionsGranted()) {
@@ -31,8 +32,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startCamera() {
-        // 这里会跳转到你的 fragment_camera 布局，显示识别画面
-        Toast.makeText(this, "Camera Started", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "相机已就绪", Toast.LENGTH_SHORT).show()
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
             if (allPermissionsGranted()) {
                 startCamera()
             } else {
-                Toast.makeText(this, "未获得权限，App 无法运行", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "没有权限，无法运行", Toast.LENGTH_SHORT).show()
                 finish()
             }
         }
