@@ -11,15 +11,18 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Setup Structure
+      - name: Force Fix Structure
         run: |
+          # 如果根目录有 src，强行挪进 app
+          mkdir -p app
           if [ -d "src" ]; then
-            mkdir -p app
-            mv src app/
+            cp -r src app/
           fi
-          if [ ! -f "settings.gradle" ]; then
-            echo "include ':app'" > settings.gradle
-          fi
+          # 确保有 settings.gradle
+          echo "include ':app'" > settings.gradle
+          # 确保有 gradle.properties 开启 AndroidX
+          echo "android.useAndroidX=true" > gradle.properties
+          echo "android.enableJetifier=true" >> gradle.properties
           chmod +x gradlew
 
       - name: Build APK
