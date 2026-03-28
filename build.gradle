@@ -1,64 +1,22 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'androidx.navigation.safeargs.kotlin'
-
-android {
-    compileSdkVersion 33
-
-    defaultConfig {
-        applicationId "org.tensorflow.lite.examples.objectdetection"
-        minSdkVersion 21
-        targetSdkVersion 33
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
     }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
-    buildFeatures {
-        // 确保使用 viewBinding，避开报错的 dataBinding
-        viewBinding true
-    }
-
-    androidResources {
-        noCompress 'tflite'
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.5.2"
     }
 }
 
-dependencies {
-    implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'com.google.android.material:material:1.6.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
 
-    // Navigation
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.2'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.5.2'
-
-    // CameraX
-    def camerax_version = "1.1.0"
-    implementation "androidx.camera:camera-core:$camerax_version"
-    implementation "androidx.camera:camera-camera2:$camerax_version"
-    implementation "androidx.camera:camera-lifecycle:$camerax_version"
-    implementation "androidx.camera:camera-view:$camerax_version"
-
-    // TensorFlow Lite (识别垃圾的核心引擎)
-    implementation 'org.tensorflow:tensorflow-lite-task-vision:0.4.2'
-    implementation 'org.tensorflow:tensorflow-lite-gpu:2.9.0'
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }
