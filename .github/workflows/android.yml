@@ -27,8 +27,8 @@ jobs:
 
       - name: Build APK
         run: |
-          ./gradlew clean
-          ./gradlew :app:assembleDebug --no-daemon
+          chmod +x gradlew
+          ./gradlew clean :app:assembleDebug --stacktrace -Pandroid.useAndroidX=true
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
