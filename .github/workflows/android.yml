@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up JDK 11
         uses: actions/setup-java@v4
         with:
@@ -13,20 +13,26 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Fix Project Structure
+      - name: Reconstruct Project Structure
         run: |
-          # 如果 src 文件夹在根目录，强行把它挪进 app 文件夹，伪造成标准结构
-          if [ -d "src" ]; then
+          # 1. 如果没有 app 文件夹，就造一个，把散落的零件扔进去
+          if [ ! -d "app" ]; then
             mkdir -p app
-            mv src app/
-            # 如果 build.gradle 也在根目录，挪进去
+            [ -d "src" ] && mv src app/
             [ -f "build.gradle" ] && cp build.gradle app/
             [ -f "proguard-rules.pro" ] && mv proguard-rules.pro app/
           fi
+          
+          # 2. 确保根目录下有一个基本的 settings.gradle，否则机器人不干活
+          if [ ! -f "settings.gradle" ]; then
+            echo "include ':app'" > settings.gradle
+          fi
+
+          # 3. 赋予运行权限
           chmod +x gradlew
 
-      - name: Build with Gradle
-        run: ./gradlew assembleDebug --stacktrace
+      - name: Build APK
+        run: ./gradlew :app:assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
